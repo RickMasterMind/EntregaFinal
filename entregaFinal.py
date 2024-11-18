@@ -1,15 +1,10 @@
-
-# ! Analizardo de Texto
-# ASDASDASD
-# ASDASDASD
-# ASDASDAD
-
 def mostrar_menu():
     print("\n--- Menu del Analizador de Texto ---")
     print("1. Ingresar texto")
     print("2. Analizar texto")
     print("3. Mostrar historial de textos")
-    print("4. Salir")
+    print("4. Eliminar un texto del historial")
+    print("5. Salir")
     return input("Selecciona una opcion: ")
 
 def analizar_texto(texto):
@@ -38,6 +33,22 @@ def mostrar_historial(historial):
     for i, texto in enumerate(historial, 1):
         print(f"{i}. {texto}")
 
+def eliminar_texto(historial):
+    if not historial:
+        print("\nNo hay textos en el historial para eliminar.")
+        return
+
+    mostrar_historial(historial)
+    try:
+        opcion = int(input("\nSelecciona el número del texto que deseas eliminar: "))
+        if 1 <= opcion <= len(historial):
+            eliminado = historial.pop(opcion - 1)
+            print(f"\nTexto eliminado con éxito: {eliminado}")
+        else:
+            print("\nNúmero fuera de rango. Intenta de nuevo.")
+    except ValueError:
+        print("\nEntrada inválida. Intenta de nuevo.")
+
 def main():
     historial_textos = []
 
@@ -61,10 +72,12 @@ def main():
             else:
                 mostrar_historial(historial_textos)
         elif opcion == "4":
-            print("\n¡Gracias por usar el Analizador de Texto! ")
+            eliminar_texto(historial_textos)
+        elif opcion == "5":
+            print("\n¡Gracias por usar el Analizador de Texto!")
             break
         else:
-            print("\nOpción invalida. Intenta de nuevo.")
+            print("\nOpción inválida. Intenta de nuevo.")
 
 if __name__ == "__main__":
     main()
