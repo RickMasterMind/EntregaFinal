@@ -1,10 +1,14 @@
+import os
+
 def mostrar_menu():
     print("\n--- Menu del Analizador de Texto ---")
     print("1. Ingresar texto")
     print("2. Analizar texto")
     print("3. Mostrar historial de textos")
     print("4. Eliminar un texto del historial")
-    print("5. Salir")
+    print("5. Guardar historial en archivo .txt")
+    print("6. Cargar historial desde archivo .txt")
+    print("7. Salir")
     return input("Selecciona una opcion: ")
 
 def analizar_texto(texto):
@@ -49,6 +53,29 @@ def eliminar_texto(historial):
     except ValueError:
         print("\nEntrada inválida. Intenta de nuevo.")
 
+def guardar_historial_txt(historial, archivo="historial.txt"):
+    try:
+        with open(archivo, "w", encoding="utf-8") as file:
+            for texto in historial:
+                file.write(texto + "\n")
+        print(f"\nHistorial guardado con éxito en el archivo '{archivo}'.")
+    except Exception as e:
+        print(f"\nError al guardar el historial: {e}")
+
+def cargar_historial_txt(archivo="historial.txt"):
+    if not os.path.exists(archivo):
+        print(f"\nEl archivo '{archivo}' no existe. No se puede cargar el historial.")
+        return []
+
+    try:
+        with open(archivo, "r", encoding="utf-8") as file:
+            historial = [linea.strip() for linea in file.readlines()]
+        print(f"\nHistorial cargado con éxito desde el archivo '{archivo}'.")
+        return historial
+    except Exception as e:
+        print(f"\nError al cargar el historial: {e}")
+        return []
+
 def main():
     historial_textos = []
 
@@ -74,6 +101,10 @@ def main():
         elif opcion == "4":
             eliminar_texto(historial_textos)
         elif opcion == "5":
+            guardar_historial_txt(historial_textos)
+        elif opcion == "6":
+            historial_textos = cargar_historial_txt()
+        elif opcion == "7":
             print("\n¡Gracias por usar el Analizador de Texto!")
             break
         else:
