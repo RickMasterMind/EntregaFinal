@@ -47,18 +47,18 @@ def eliminar_texto(historial):
         opcion = int(input("\nSelecciona el número del texto que deseas eliminar: "))
         if 1 <= opcion <= len(historial):
             eliminado = historial.pop(opcion - 1)
-            print(f"\nTexto eliminado con éxito: {eliminado}")
+            print(f"\nTexto eliminado con exito: {eliminado}")
         else:
-            print("\nNúmero fuera de rango. Intenta de nuevo.")
+            print("\nNumero fuera de rango. Intenta de nuevo.")
     except ValueError:
-        print("\nEntrada inválida. Intenta de nuevo.")
+        print("\nEntrada invalida. Intenta de nuevo.")
 
 def guardar_historial_txt(historial, archivo="historial.txt"):
     try:
         with open(archivo, "w", encoding="utf-8") as file:
             for texto in historial:
                 file.write(texto + "\n")
-        print(f"\nHistorial guardado con éxito en el archivo '{archivo}'.")
+        print(f"\nHistorial guardado con exito en el archivo '{archivo}'.")
     except Exception as e:
         print(f"\nError al guardar el historial: {e}")
 
@@ -108,7 +108,7 @@ def main():
             print("\n¡Gracias por usar el Analizador de Texto!")
             break
         else:
-            print("\nOpción inválida. Intenta de nuevo.")
+            print("\nOpción invalida. Intenta de nuevo.")
 
 if __name__ == "__main__":
     main()
