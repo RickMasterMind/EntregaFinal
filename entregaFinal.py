@@ -1,5 +1,41 @@
 import os
 
+class GestorDeTextos:
+    def __init__(self):
+        self.historial = []
+
+    def agregar_texto(self, texto):
+        self.historial.append(texto)
+
+    def obtener_historial(self):
+        return self.historial
+
+    def eliminar_texto(self, indice):
+        if 0 <= indice < len(self.historial):
+            return self.historial.pop(indice)
+        else:
+            raise IndexError("indice fuera de rango.")
+
+    def guardar_en_archivo(self, archivo="historial.txt"):
+        try:
+            with open(archivo, "w", encoding="utf-8") as file:
+                for texto in self.historial:
+                    file.write(texto + "\n")
+            return f"Historial guardado con exito en el archivo '{archivo}'."
+        except Exception as e:
+            raise Exception(f"Error al guardar el historial: {e}")
+
+    def cargar_desde_archivo(self, archivo="historial.txt"):
+        if not os.path.exists(archivo):
+            raise FileNotFoundError(f"El archivo '{archivo}' no existe.")
+        try:
+            with open(archivo, "r", encoding="utf-8") as file:
+                self.historial = [linea.strip() for linea in file.readlines()]
+            return f"Historial cargado con exito desde el archivo '{archivo}'."
+        except Exception as e:
+            raise Exception(f"Error al cargar el historial: {e}")
+
+
 def mostrar_menu():
     print("\n--- Menu del Analizador de Texto ---")
     print("1. Ingresar texto")
@@ -10,6 +46,7 @@ def mostrar_menu():
     print("6. Cargar historial desde archivo .txt")
     print("7. Salir")
     return input("Selecciona una opcion: ")
+
 
 def analizar_texto(texto):
     palabras = texto.split()
@@ -25,6 +62,7 @@ def analizar_texto(texto):
         "palabras_unicas": len(set(palabras))
     }
 
+
 def mostrar_resultados(analisis):
     print("\n--- Resultados del Analisis ---")
     print(f"Total de palabras: {analisis['total_palabras']}")
@@ -32,83 +70,69 @@ def mostrar_resultados(analisis):
     print(f"Longitud promedio de palabras: {analisis['longitud_promedio']:.2f}")
     print(f"Numero de palabras unicas: {analisis['palabras_unicas']}")
 
+
 def mostrar_historial(historial):
     print("\n--- Historial de Textos Analizados ---")
     for i, texto in enumerate(historial, 1):
         print(f"{i}. {texto}")
 
-def eliminar_texto(historial):
-    if not historial:
+
+def eliminar_texto(gestor):
+    if not gestor.obtener_historial():
         print("\nNo hay textos en el historial para eliminar.")
         return
 
-    mostrar_historial(historial)
+    mostrar_historial(gestor.obtener_historial())
     try:
-        opcion = int(input("\nSelecciona el número del texto que deseas eliminar: "))
-        if 1 <= opcion <= len(historial):
-            eliminado = historial.pop(opcion - 1)
-            print(f"\nTexto eliminado con exito: {eliminado}")
-        else:
-            print("\nNumero fuera de rango. Intenta de nuevo.")
-    except ValueError:
-        print("\nEntrada invalida. Intenta de nuevo.")
+        opcion = int(input("\nSelecciona el numero del texto que deseas eliminar: "))
+        eliminado = gestor.eliminar_texto(opcion - 1)
+        print(f"\nTexto eliminado con exito: {eliminado}")
+    except (ValueError, IndexError):
+        print("\nEntrada invalida o número fuera de rango. Intenta de nuevo.")
 
-def guardar_historial_txt(historial, archivo="historial.txt"):
-    try:
-        with open(archivo, "w", encoding="utf-8") as file:
-            for texto in historial:
-                file.write(texto + "\n")
-        print(f"\nHistorial guardado con exito en el archivo '{archivo}'.")
-    except Exception as e:
-        print(f"\nError al guardar el historial: {e}")
-
-def cargar_historial_txt(archivo="historial.txt"):
-    if not os.path.exists(archivo):
-        print(f"\nEl archivo '{archivo}' no existe. No se puede cargar el historial.")
-        return []
-
-    try:
-        with open(archivo, "r", encoding="utf-8") as file:
-            historial = [linea.strip() for linea in file.readlines()]
-        print(f"\nHistorial cargado con éxito desde el archivo '{archivo}'.")
-        return historial
-    except Exception as e:
-        print(f"\nError al cargar el historial: {e}")
-        return []
 
 def main():
-    historial_textos = []
+    gestor = GestorDeTextos()
 
     while True:
         opcion = mostrar_menu()
 
         if opcion == "1":
             texto = input("\nIngresa el texto a analizar: ")
-            historial_textos.append(texto)
-            print("Texto guardado con éxito.")
+            gestor.agregar_texto(texto)
+            print("Texto guardado con exito.")
         elif opcion == "2":
-            if not historial_textos:
+            if not gestor.obtener_historial():
                 print("\nNo hay textos para analizar. Por favor, ingresa uno primero.")
             else:
-                texto_actual = historial_textos[-1]
+                texto_actual = gestor.obtener_historial()[-1]
                 analisis = analizar_texto(texto_actual)
                 mostrar_resultados(analisis)
         elif opcion == "3":
-            if not historial_textos:
+            if not gestor.obtener_historial():
                 print("\nNo hay textos en el historial.")
             else:
-                mostrar_historial(historial_textos)
+                mostrar_historial(gestor.obtener_historial())
         elif opcion == "4":
-            eliminar_texto(historial_textos)
+            eliminar_texto(gestor)
         elif opcion == "5":
-            guardar_historial_txt(historial_textos)
+            try:
+                mensaje = gestor.guardar_en_archivo()
+                print(f"\n{mensaje}")
+            except Exception as e:
+                print(f"\nError: {e}")
         elif opcion == "6":
-            historial_textos = cargar_historial_txt()
+            try:
+                mensaje = gestor.cargar_desde_archivo()
+                print(f"\n{mensaje}")
+            except Exception as e:
+                print(f"\nError: {e}")
         elif opcion == "7":
-            print("\n¡Gracias por usar el Analizador de Texto!")
+            print("\nGracias por usar el Analizador de Texto!")
             break
         else:
-            print("\nOpción invalida. Intenta de nuevo.")
+            print("\nOpción invalida. Intente de nuevo.")
+
 
 if __name__ == "__main__":
     main()
